@@ -19,8 +19,7 @@ export async function signup(req, res) {
           email,
         },
       });
-      const token = jwt.sign({ username: name }, process.env.SECRET);
-      return res.status(201).json({ msg: `User created with id: ${user.id} Token: ${token}` });
+      return res.status(201).json({ msg: `User created with id: ${user.id}` });
     } else {
       return res.status(409).json({ msg: "User Already Exists!" });
     }
@@ -32,26 +31,19 @@ export async function signup(req, res) {
 
 export async function login(req, res) {
   try {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader) {
-      return res.status(401).json({ error: "Authorization header missing" });
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: "Email not provided in request body" });
     }
-
-    const [bearer, token] = authHeader.split(" ");
-
-    if (bearer !== "Bearer" || !token) {
-      return res.status(401).json({ error: "Invalid Authorization header format" });
+    const user = await userExists(email);
+    if (!user) {
+      return res.status(400).json({ error: "Invalid Credentials" });
     }
-
-    const verified_Token = jwt.verify(token, process.env.SECRET);
-    if (verified_Token) {
-      const name = jwt.decode(token);
-      return res.status(201).json({ msg: `userName: ${name.username}` });
-    } else {
-      return res.status(401).json({ error: "Invalid Token" });
-    }
+    // Implement password check
+    const token = jwt.sign({ email: email }, process.env.SECRET);
+    return res.status(201).json({ token: token });
   } catch (error) {
-    res.status(500).json({ msg: `Error ${error}` });
+    console.error("Error:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 }
