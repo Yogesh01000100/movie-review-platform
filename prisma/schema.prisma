@@ -7,10 +7,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
-  id String @id @default(auto()) @map("_id")@db.ObjectId
-  name String?
-  email String? @unique
+model User {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  name      String?
+  email     String?  @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  reviews   Review[]
+}
+
+model Review {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  movieId   String
+  rating    Int
+  comment   String
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
 }
