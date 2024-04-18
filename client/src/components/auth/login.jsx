@@ -1,22 +1,23 @@
-import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  login,
+  logout,
+  setEmail,
+  setPassword,
+} from "../../features/auth/authSlice";
 
 function Login() {
-  const [user, setUser] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector((state) => state.auth.user);
+  const email = useSelector((state) => state.auth.email);
+  const password = useSelector((state) => state.auth.password);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if(email=='email@email.com' && password==1){
-      setUser(true);
-    }
-    else{
-      alert("Error!");
-    }
+    dispatch(login({ email, password }));
   };
 
-  const handleSignUp = () => {};
+  const handleSignUp = () => {}; // to be implemented
 
   return (
     <div>
@@ -29,7 +30,7 @@ function Login() {
             value={email}
             placeholder="Enter email"
             onChange={(e) => {
-              setEmail(e.target.value);
+              dispatch(setEmail(e.target.value));
             }}
           ></input>
         </label>
@@ -43,12 +44,12 @@ function Login() {
             value={password}
             placeholder="Enter password"
             onChange={(e) => {
-              setPassword(e.target.value);
+              dispatch(setPassword(e.target.value));
             }}
           ></input>
         </label>
         <div>
-          {user ? (
+          {isLoggedIn ? (
             ""
           ) : (
             <div>
@@ -63,13 +64,13 @@ function Login() {
       </form>
 
       <div>
-        {user ? (
+        {isLoggedIn ? (
           <div>
             <h1> hELLO</h1>
             <button
               type="button"
               onClick={() => {
-                setUser(false);
+                dispatch(logout());
               }}
             >
               Log out
