@@ -1,85 +1,141 @@
 import { useSelector, useDispatch } from "react-redux";
+import { login, logout } from "../../features/auth/authSlice";
+import auth from "../../config/firebase-config";
 import {
-  login,
-  logout,
-  setEmail,
-  setPassword,
-} from "../../features/auth/authSlice";
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  sendEmailVerification,
+} from "firebase/auth";
+import { useState } from "react";
 
 function Login() {
+  const [authState, setAuthState] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state.auth.user);
-  const email = useSelector((state) => state.auth.email);
-  const password = useSelector((state) => state.auth.password);
+  const isLoggedIn = useSelector((state) => state.auth.user !== null);
 
-  const handleSubmit = (e) => {
+  const toggleAuthState = () => setAuthState(!authState);
+
+  const handleAuthAction = async (e) => {
     e.preventDefault();
-    dispatch(login({ email, password }));
+    if (authState) await handleSignUp();
+    else await handleSignIn();
   };
 
-  const handleSignUp = () => {}; // to be implemented
+  const handleSignIn = async () => {
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      dispatch(
+        login({
+          uid: result.user.uid,
+          email: result.user.email,
+          displayName: result.user.displayName,
+          photoURL: result.user.photoURL,
+        })
+      );
+    } catch (error) {
+      console.error("Error signing in with email and password:", error);
+    }
+  };
+
+  const handleSignUp = async () => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      await sendEmailVerification(userCredential.user);
+    } catch (error) {
+      console.error("Error signing up:", error);
+    }
+  };
+
+  const handleSignInWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      dispatch(
+        login({
+          uid: result.user.uid,
+          email: result.user.email,
+          displayName: result.user.displayName,
+          photoURL: result.user.photoURL,
+        })
+      );
+      const { accessToken } = result.user.stsTokenManager;
+      localStorage.setItem("_axxess_Token_", accessToken);
+    } catch (error) {
+      console.error("Error signing in with Google:", error);
+    }
+  };
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="Email">
-          Email:
-          <input
-            id="Email"
-            type="email"
-            value={email}
-            placeholder="Enter email"
-            onChange={(e) => {
-              dispatch(setEmail(e.target.value));
-            }}
-          ></input>
-        </label>
-
-        <br />
-        <label htmlFor="password">
-          Password:
-          <input
-            id="password"
-            type="password"
-            value={password}
-            placeholder="Enter password"
-            onChange={(e) => {
-              dispatch(setPassword(e.target.value));
-            }}
-          ></input>
-        </label>
+      {isLoggedIn ? (
         <div>
-          {isLoggedIn ? (
-            ""
-          ) : (
-            <div>
-              <button type="submit">Log In</button>
-              <br />
-              <button type="button" onClick={handleSignUp}>
-                SignUp
-              </button>
-            </div>
-          )}
+          <h1>Welcome Back!</h1>
+          <button
+            onClick={() => {
+              localStorage.removeItem("_axxess_Token_");
+              dispatch(logout());
+            }}
+            className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-green-700"
+          >
+            Log out
+          </button>
         </div>
-      </form>
-
-      <div>
-        {isLoggedIn ? (
+      ) : (
+        <form onSubmit={handleAuthAction}>
+          <label htmlFor="Email">
+            Email:
+            <input
+              id="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter email"
+            />
+          </label>
+          <br />
+          <label htmlFor="password">
+            Password:
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter password"
+            />
+          </label>
           <div>
-            <h1> hELLO</h1>
+            <button
+              type="submit"
+              className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
+            >
+              {authState ? "Sign Up" : "Sign In"}
+            </button>
             <button
               type="button"
-              onClick={() => {
-                dispatch(logout());
-              }}
+              className="bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-700"
+              onClick={handleSignInWithGoogle}
             >
-              Log out
+              Continue with Google
             </button>
+            <p
+              className="text-center text-gray-600 cursor-pointer"
+              onClick={toggleAuthState}
+            >
+              {authState
+                ? "Already have an account? Sign In"
+                : "Need an account? Sign Up"}
+            </p>
           </div>
-        ) : (
-          " "
-        )}
-      </div>
+        </form>
+      )}
     </div>
   );
 }

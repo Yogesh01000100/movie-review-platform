@@ -28,4 +28,4 @@ dist-ssr/
 .env
 
 # Specific files to exclude
-src/components/auth/firebase-config.js
+src/config/firebase-config.js
