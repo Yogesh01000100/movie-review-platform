@@ -1,9 +1,22 @@
+import { BrowserRouter } from "react-router-dom";
 import BaseRoute from "./routes";
+import { AuthProvider } from "./context/AuthContext";
+import { Toaster } from "sonner";
 
 function App() {
-
   return (
-      <BaseRoute/>
+    <BrowserRouter>
+      <AuthProvider>
+        <BaseRoute />
+        <Toaster
+          richColors
+          position="top-center"
+          newestOnTop={true}
+          closeButton 
+          headLess
+        />
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

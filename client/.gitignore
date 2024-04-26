@@ -27,5 +27,4 @@ dist-ssr/
 *.sw?
 .env
 
-# Specific files to exclude
-src/config/firebase-config.js
+.vercel
