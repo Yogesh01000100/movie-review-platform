@@ -14,6 +14,7 @@ function App() {
           newestOnTop={true}
           closeButton 
           headLess
+          Toaster expand={true}
         />
       </AuthProvider>
     </BrowserRouter>

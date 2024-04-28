@@ -10,7 +10,6 @@ import { PuffLoader } from "react-spinners";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [session, setActive] = useState(true);
   const [loading, setLoading] = useState(true);
   const activeSession = useSelector((state) => state.auth.sessionState);
   const navigate = useNavigate();
@@ -25,7 +24,6 @@ export const AuthProvider = ({ children }) => {
           res.customStatus === "noSession" ||
           res.customStatus === "sessionExpired"
         ) {
-          setActive(false);
           dispatch(sessionState(false));
           if (
             localStorage.getItem("wasLoggedIn") &&
@@ -34,17 +32,20 @@ export const AuthProvider = ({ children }) => {
             toast.warning("Your session has expired. Please log in again!");
             localStorage.removeItem("wasLoggedIn");
             sessionStorage.removeItem("Logout");
-            navigate("/login");
           } else {
             localStorage.removeItem("wasLoggedIn");
             sessionStorage.removeItem("Logout");
-            navigate("/login");
           }
         }
         if (res.customStatus == "sessionActive") {
           dispatch(sessionState(true));
           localStorage.setItem("wasLoggedIn", true);
           navigate("/home");
+        } else {
+          navigate("/login");
+          if (!res) {
+            toast.warning("Unable to connect to the server!");
+          }
         }
       } catch (error) {
         console.error("Session check failed:", error);
@@ -53,7 +54,7 @@ export const AuthProvider = ({ children }) => {
       }
     };
     verifySession();
-  }, [dispatch, navigate, session, activeSession]);
+  }, [dispatch, navigate, activeSession]);
 
   if (loading) {
     return (

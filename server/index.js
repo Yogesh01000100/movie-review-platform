@@ -3,14 +3,14 @@ import cors from "cors";
 import cookieParser from 'cookie-parser';
 import userRoutes from './src/routes/userRoutes.js';
 import authRoutes from './src/routes/authRoutes.js';
-
+import 'dotenv/config';
 
 const app = express();
-
-app.use(cors({
-  origin: 'https://reelchain.vercel.app',
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN,
   credentials: true,
-}));
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -22,5 +22,5 @@ app.get('/', (req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log('Server is running !');
+  console.log('Server is running on port 3000!');
 });

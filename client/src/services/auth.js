@@ -1,9 +1,10 @@
 import axios from "axios";
+const API_URL= import.meta.env.VITE_REACT_APP_API_URL_AUTH;
 
 export const createSession = async (idToken) => {
   try {
     const response = await axios.post(
-      "https://movie-review-platform-server.vercel.app/auth/createsessioncookie",
+      `${API_URL}/createsessioncookie`,
       {
         idToken,
       },
@@ -30,7 +31,7 @@ export const sessionLogout = async () => {
   const token = "_logout_token_";
   try {
     const response = await axios.post(
-      "https://movie-review-platform-server.vercel.app/auth/signout",
+      `${API_URL}/signout`,
       {
         token,
       },
@@ -50,7 +51,7 @@ export const sessionLogout = async () => {
 export const checkCookieSession = async () => {
   try {
     const response = await axios.get(
-      "https://movie-review-platform-server.vercel.app/auth/sessionexists",
+      `${API_URL}/sessionexists`,
       {
         withCredentials: true,
       }

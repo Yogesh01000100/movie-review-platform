@@ -126,13 +126,13 @@ function Auth() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-200">
-      <div className="bg-white bg-opacity-50 rounded-xl shadow-md p-6 w-full h-1/2 max-w-md mx-auto backdrop-blur-md">
+    <div className="font-roboto flex items-center justify-center h-screen bg-amber-300">
+      <div className="bg-amber-100 rounded-xl shadow-md p-6 sm:p-6 w-full max-w-xs sm:max-w-md md:max-w-lg mx-auto border-gray-600 border-2">
         <div className="text-center">
-          <h2 className="text-slate-800 text-3xl font-bold mt-5 mb-6">
+          <div className="text-slate-800 text-3xl sm:text-3xl md:text-4xl font-bold mt-5 mb-6">
             {authState ? "Create an account" : "Welcome back"}
-          </h2>
-          <form onSubmit={handleAuthAction} className="space-y-7">
+          </div>
+          <form onSubmit={handleAuthAction} className="space-y-7 my-4">
             <div className="flex flex-col items-center my-1">
               <input
                 id="Email"
@@ -140,7 +140,7 @@ function Auth() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email address"
-                className="block w-3/5 px-4 py-2 my-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="block w-5/6 sm:w-3/5 px-3 py-2 my-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
               <input
                 id="password"
@@ -148,12 +148,12 @@ function Auth() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                className="block w-3/5 px-4 py-2 my-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="block w-5/6 sm:w-3/5 px-3 py-2 my-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
             <button
-              type="submit"
-              className="w-3/5 bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+              type="button"
+              className="w-5/6 sm:w-3/5 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded border-black border mt-4"
             >
               <div className="flex justify-center items-center">
                 <div>
@@ -166,7 +166,7 @@ function Auth() {
               </div>
             </button>
             <p
-              className="text-gray-600 cursor-pointer text-sm"
+              className="text-gray-600 cursor-pointer text-xs sm:text-sm"
               onClick={() => {
                 toggleAuthState();
                 setEmail("");
@@ -192,17 +192,18 @@ function Auth() {
 
             <div className="relative">
               <div className="absolute inset-0 flex justify-center items-center">
-                <div className="w-3/5 border-t border-gray-300"></div>{" "}
+                <div className="w-4/5 sm:w-3/5 border-t border-gray-600"></div>
               </div>
               <div className="relative flex justify-center mt-2">
-                <span className="bg-gray-100 px-3 text-sm text-gray-500">
+                <span className="bg-amber-100 px-3 text-xs sm:text-sm text-black rounded">
                   OR
                 </span>
               </div>
             </div>
+
             <button
               type="button"
-              className="w-3/5 bg-white text-black py-2 rounded border-blue-500 hover:bg-slate-100 border mt-4"
+              className="w-5/6 sm:w-3/5 bg-white text-black py-2 rounded border-black hover:bg-slate-100 border mt-4"
               onClick={handleSignInWithGoogle}
             >
               <div className="flex flex-row justify-center items-center">
